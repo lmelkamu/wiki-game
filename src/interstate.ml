@@ -39,14 +39,16 @@ let load_command =
 ;;
 
 module City = String
+module Interstate = String
 
-module Interstate = struct
-  include String
+module G =
+  Graph.Imperative.Graph.ConcreteLabeled
+    (City)
+    (struct
+      type t = Interstate.t [@@deriving compare]
 
-  let default = ""
-end
-
-module G = Graph.Imperative.Graph.ConcreteLabeled (City) (Interstate)
+      let default = ""
+    end)
 
 module Dot = Graph.Graphviz.Dot (struct
   include G

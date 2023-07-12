@@ -1,5 +1,7 @@
 open! Core
 
+let ( >> ) f g x = f x |> g
+
 (* [get_linked_articles] should return a list of wikipedia article lengths
    contained in the input.
 
@@ -20,7 +22,7 @@ let get_linked_articles contents : string list =
   $$ "a[href]"
   |> filter (fun a ->
        let link = R.attribute "href" a in
-       let is_wiki = String.is_substring ~substring:"/wiki/" link in
+       let is_wiki = String.is_substring ~substring:"wiki/" link in
        let not_namespace =
          match Wikipedia_namespace.namespace link with
          | Some _special -> false
@@ -43,17 +45,62 @@ let print_links_command =
         List.iter (get_linked_articles contents) ~f:print_endline]
 ;;
 
+module G = Graph.Imperative.Graph.Concrete (String)
+
+module Dot = Graph.Graphviz.Dot (struct
+  include G
+
+  (* These functions can be changed to tweak the appearance of the generated
+     graph. Check out the ocamlgraph graphviz API
+     (https://github.com/backtracking/ocamlgraph/blob/master/src/graphviz.mli)
+     for examples of what values can be set here. *)
+  let edge_attributes _ = [ `Dir `Forward ]
+  let default_edge_attributes _ = []
+  let get_subgraph _ = None
+  let vertex_attributes v = [ `Shape `Box; `Label v; `Fillcolor 1000 ]
+  let vertex_name v = v
+  let default_vertex_attributes _ = []
+  let graph_attributes _ = []
+end)
+
+let format =
+  String.chop_prefix_if_exists ~prefix:"/"
+  >> String.chop_prefix_if_exists ~prefix:"wiki/"
+  >> String.lstrip ?drop:None
+  >> (String.tr_multi ~target:"-/()*" ~replacement:"_____" |> Staged.unstage)
+  >> String.lstrip ?drop:None
+;;
+
 (* [visualize] should explore all linked articles up to a distance of
    [max_depth] away from the given [origin] article, and output the result as
    a DOT file. It should use the [how_to_fetch] argument along with
    [File_fetcher] to fetch the articles so that the implementation can be
    tested locally on the small dataset in the ../resources/wiki directory. *)
+let rec linker ~link ~max_depth ~how_to_fetch =
+  if max_depth <> 0
+  then (
+    let contents = File_fetcher.fetch_exn how_to_fetch ~resource:link in
+    let links = get_linked_articles contents in
+    List.concat_map links ~f:(fun sub_link ->
+      [ format link, format sub_link ]
+      @ linker ~link:sub_link ~max_depth:(max_depth - 1) ~how_to_fetch))
+  else []
+;;
+
 let visualize ?(max_depth = 3) ~origin ~output_file ~how_to_fetch () : unit =
-  ignore (max_depth : int);
-  ignore (origin : string);
-  ignore (output_file : File_path.t);
-  ignore (how_to_fetch : File_fetcher.How_to_fetch.t);
-  failwith "TODO"
+  let graph = G.create () in
+  let total_links =
+    linker ~link:origin ~max_depth ~how_to_fetch
+    |> List.dedup_and_sort ~compare:[%compare: string * string]
+  in
+  List.iter total_links ~f:(fun (link1, link2) ->
+    (* [G.add_edge] auomatically adds the endpoints as vertices in the graph
+       if they don't already exist. *)
+    G.add_edge graph link1 link2);
+  Dot.output_graph
+    (Out_channel.create (File_path.to_string output_file))
+    graph;
+  printf !"Done! Wrote dot file to %{File_path}\n%!" output_file
 ;;
 
 let visualize_command =
