@@ -1,6 +1,29 @@
 body {
     max-width: 1000px;
     margin: auto;
-    background: #FAFAFA;
+    background-image: url("background.png");
     font-family: Helvetica;
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+}
+
+.list {
+    padding-top: 10px;
+    width: 80%;
+    background: #FAFAFA;
+    margin: auto;
+}
+
+.form {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    margin: auto;
+    background:
+        #f7bf94;
 }

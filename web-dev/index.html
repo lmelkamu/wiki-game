@@ -1,13 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>My Blog</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-    </body>
-    <script src="index.js"></script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Why Jane Street?</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    h1 {
+        text-align: center;
+        color: white;
+    }
+
+    h4 {
+        text-align: center;
+        color: white;
+    }
+
+    p {
+        text-align: center;
+    }
+
+    div {
+        text-align: center;
+    }
+
+    img {
+        text-align: center;
+    }
+</style>
+
+<body style="background-color:aquamarine;">
+    <h1>
+        Welcome to the best webpage!
+    </h1>
+    <table>
+        <tr>
+            <th> <img src="jane street.png" class="center"></th>
+            <th> <img src="jane street.png" class="center"></th>
+            <th> <img src="jane street.png" class="center"></th>
+        </tr>
+    </table>
+
+    <h4 class="center">Jane Street is a great company and should hire me!
+    </h4>
+    <div class="list" style="background-color:white;" width="100">
+
+        <table style="table-layout: fixed; width: 100%;">
+            <colgroup>
+                <col style="width: 50%" />
+                <col style="width: 50%" />
+            </colgroup>
+            <tr>
+                <th>Reasons to love Jane Street:</th>
+                <th>Reasons to hire me:</th>
+            </tr>
+            <tr>
+                <th>
+                    <ol class="center">
+                        <li>Free food</li>
+                        <li>Great people</li>
+                        <li>Awesome pay</li>
+                        <li>In NYC</li>
+                        <li>Sick Logo</li>
+                    </ol>
+
+                </th>
+                <th>
+                    <ol>
+                        <li>I enjoy free food</li>
+                        <li>I am a great person</li>
+                        <li>Fan of money</li>
+                        <li>I am a city girl</li>
+                        <li>I can be smart at times</li>
+                    </ol>
+                </th>
+            </tr>
+    </div>
+    </table>
+    <div class="form">
+        <h4> Will you hire me?</h4>
+        <button id="yes" onclick="correct()"> Yes!</button>
+        <button onclick="changeyes()" id="no"> No</button>
+        <img src="ballons.webp" style="display: none;" id="ballons" height="100">
+    </div>
+
+</body>
+<script src="index.js" height="50"></script>
+
 </html>
